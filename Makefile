@@ -1,13 +1,6 @@
-OPERATOR_BUNDLE?=quay.io/openshift-observability-ui/observability-ui-operator-bundle:0.4.0
-
-# Terminal output colors 
-GREEN?='\033[0;32m'
-ENDCOLOR?='\033[0m' # No Color
-RED?='\033[0;31m'
-
-PHONY: all
-all:
-	./deploy-all.sh
+PHONY: coo-resources
+coo-resources:
+	cd entrypoint && ./entrypoint.sh
 
 PHONY: monitoring-scale-up
 monitoring-scale-up:
@@ -23,34 +16,4 @@ monitoring-cleanup:
 
 PHONY: test-user
 test-user:
-	cd test-user-manifest && ./create-htpsswd-test-user.sh
-
-PHONY: dashboards
-dashboards:
-	(cd dashboards-manifests && ./deploy-dashboards.sh)
-	(cd coo && oc apply -f ui-plugin-dashboards.yaml)
-
-PHONY: korrel8r
-korrel8r:
-	printf "\n${GREEN} *** Deploying Korrel8r, Logging, Network Observability *** ${ENDCOLOR}\n"
-	(cd  korrel8r-manifests && cd openshift && make operators && make resources)
-	(cd  coo && oc apply -f ui-plugin-logging.yaml)
-
-PHONY: troubleshooting
-troubleshooting:
-	printf "\n${GREEN} *** Deploying Troubleshooting *** ${ENDCOLOR}\n"
-	(cd coo && oc apply -f ui-plugin-troubleshooting.yaml)
-
-PHONY: tracing 
-tracing: 
-	printf "\n${GREEN} *** Deploying Tracing *** ${ENDCOLOR}\n"
-	(cd  tracing-manifests && make operators && make resources)
-	(cd  coo && oc apply -f ui-plugin-tracing.yaml )
-
-PHONY: OBO
-OBO: 
-	operator-sdk run bundle \
-	${OPERATOR_BUNDLE} \
-	--install-mode AllNamespaces \
-	--namespace openshift-operators \
-	--security-context-config restricted
+	cd test-user && ./create-htpsswd-test-user.sh

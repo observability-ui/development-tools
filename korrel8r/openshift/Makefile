@@ -4,9 +4,10 @@ all: operators resources
 
 operators:
 	kubectl apply -k config/operators
-	../../wait.sh subscription openshift-logging cluster-logging
-	../../wait.sh subscription openshift-operators-redhat loki-operator
-	../../wait.sh subscription openshift-netobserv-operator netobserv-operator
+	../wait.sh subscription openshift-logging cluster-logging
+	../wait.sh subscription openshift-operators-redhat loki-operator
+	../wait.sh subscription openshift-netobserv-operator netobserv-operator
+	kubectl patch consoles.operator.openshift.io/cluster --type=merge --patch '{ "spec": { "plugins": ["monitoring-plugin", "netobserv-plugin"]}}'
 
 # Find default storage class.
 DEFAULT_SC=$(shell kubectl get storageclass -o=jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}')
