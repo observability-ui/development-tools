@@ -1,0 +1,9 @@
+namespace: open-cluster-management-observability
+resources:
+- namespace.yaml
+- minio-deployment.yaml
+- minio-pvc.yaml
+- minio-secret.yaml
+- minio-service.yaml
+- observability.yaml
+
