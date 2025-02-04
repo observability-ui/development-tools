@@ -1,28 +1,20 @@
-# credit https://github.com/devonfw/devon4j/blob/develop/.github/workflows/github_actions.yml
-name: github actions for development-tools
-env:
-  ORG: "observability-ui"
-  REPO_SOURCE: "development-tools"
-  REPO_DEST: "${REPO_SOURCE}.wiki"
-  GH_REPO_SOURCE: "github.com/${ORG}/${REPO_SOURCE}.git"
-  GH_REPO_DEST:  "github.com/${ORG}/${REPO_DEST}.git"
+name: Publish wiki
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - wiki/**
+      - .github/workflows/publish-wiki.yml
+concurrency:
+  group: publish-wiki
+  cancel-in-progress: true
+permissions:
+  contents: write
 jobs:
-  include:
+  publish-wiki:
     runs-on: ubuntu-latest
     steps:
-      - name: Documentation
-        run: |
-          cd ..
-          git clone https://${GH_REPO_DEST}
-          yes | cp -rf ${REPO_SOURCE}/docs/* ${REPO_DEST}/
-          cd ${REPO_DEST}
-          git config user.email ${EMAIL}
-          git config user.name ${USER}
-          git status
-          git add .
-          git commit -m "${REPO_SOURCE} docs | $(date +%s)"
-          git remote add origin-wiki "https://${USER}:${GITHUB_TOKEN}@${GH_REPO_DEST}"
-          git push origin-wiki master
+      - uses: actions/checkout@v3
+      - uses: Andrew-Chen-Wang/github-wiki-action@v4
+    with:
+      dry-run: true
