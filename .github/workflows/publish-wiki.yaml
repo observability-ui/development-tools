@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - wiki/**
-      - .github/workflows/publish-wiki.yml
+      - .github/workflows/publish-wiki.yaml
 concurrency:
   group: publish-wiki
   cancel-in-progress: true
@@ -16,5 +16,3 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: Andrew-Chen-Wang/github-wiki-action@v4
-    with:
-      dry-run: true
