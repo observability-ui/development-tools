@@ -8,33 +8,24 @@ data:
     groups:
       - name: cluster-health
         rules:
-        - alert: ClusterCPUHealth-jb
+        - alert: ClusterCPUHealth
           annotations:
-            summary: Notify when CPU utilization on a cluster is greater than the defined utilization limit
+            summary: Notify when CPU utilization on a cluster may be getting high
             description: "The cluster has a high CPU usage: {{ $value }} core for {{ $labels.cluster }} {{ $labels.clusterID }}."
           expr: |
             max(cluster:cpu_usage_cores:sum) by (clusterID, cluster) > 0
           for: 5s
           labels:
             cluster: "{{ $labels.cluster }}"
-            severity: critical
-        - alert: ClusterCPUHealth-min
+            severity: info
+        - alert: ClusterMemoryOverestimation
           annotations:
-            summary: Notify when CPU utilization on a cluster is greater than the defined utilization limit
-            description: "The cluster has a high CPU usage: {{ $value }} core for {{ $labels.cluster }} {{ $labels.clusterID }}."
+            summary: Notify when Memory Overestimation is high
+            description: "The cluster has a a greater than 10% overestimation of memory usage: {{ $value }} overestimation for {{ $labels.cluster }} {{ $labels.clusterID }}."
           expr: |
-            min(cluster:cpu_usage_cores:sum) by (clusterID, cluster) > 0
+            topk(50, cluster:memory_requested:ratio - ignoring(usage) cluster:memory_utilized:ratio) * on(clusterID, cluster) group_left(memory_requested) count_values without() ("memory_requested", cluster:memory_requested:ratio) * on(clusterID, cluster) group_left(memory_utilized) count_values without() ("memory_utilized", cluster:memory_utilized:ratio) > 0.1
           for: 5s
           labels:
             cluster: "{{ $labels.cluster }}"
             severity: critical
-        - alert: example-alert-one
-          annotations:
-            summary: Notify when CPU utilization on a cluster is greater than the defined utilization limit
-            description: "The cluster has a high CPU usage: {{ $value }} core for {{ $labels.cluster }} {{ $labels.clusterID }}."
-          expr: |
-            max(cluster:cpu_usage_cores:sum) by (clusterID, cluster) > 0
-          for: 5s
-          labels:
-            cluster: "{{ $labels.cluster }}"
-            severity: warning
+
