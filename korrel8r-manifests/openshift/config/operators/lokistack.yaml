@@ -9,7 +9,6 @@ apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   annotations:
-    olm.providedAPIs: AlertingRule.v1.loki.grafana.com,LokiStack.v1.loki.grafana.com,RecordingRule.v1.loki.grafana.com,RulerConfig.v1.loki.grafana.com
   name: openshift-operators-redhat-hack
   namespace: openshift-operators-redhat
 spec:
@@ -21,7 +20,7 @@ metadata:
   name: loki-operator
   namespace: openshift-operators-redhat
 spec:
-  channel: stable
+  channel: stable-6.1
   name: loki-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
