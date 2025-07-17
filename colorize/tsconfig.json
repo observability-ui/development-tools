@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "rootDir": ".",
+    "moduleResolution": "Bundler",
+    "types": ["node", "bun-types"],
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "preserveValueImports": false,
+    "esModuleInterop": true
+  },
+  "include": ["./*.ts"]
+}

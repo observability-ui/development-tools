@@ -6,6 +6,7 @@ It uses the bash-language-server to lint and format files:
 - [vscode](https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode)
 - [zed](https://github.com/bash-lsp/bash-language-server)
 - [lsp](https://github.com/bash-lsp/bash-language-server)
+This repo uses [bun](https://bun.sh/) to bundle create and bundle a fork of the shikijs/cli which is able to have command results piped into it.
 
 ## Miro Mind Map
 [https://miro.com/app/board/uXjVIHGY4-A=/](https://miro.com/app/board/uXjVIHGY4-A=/)
