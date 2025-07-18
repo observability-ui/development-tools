@@ -1,3 +1,5 @@
+import "./test-user-manifest/users.just"
+
 bundle := env("OPERATOR_BUNDLE", "quay.io/openshift-observability-ui/observability-ui-operator-bundle:0.4.0")
 
 # # Terminal output colors
@@ -15,7 +17,7 @@ monitoring-cleanup:
 	oc patch clusterversion version --type json -p "$(cat enable-monitoring.yaml)"
 
 test-user:
-	cd test-user-manifest && ./create-htpsswd-test-user.sh
+	cd users && ./create-htpsswd-auth.sh
 
 dashboards:
 	(cd dashboards-manifests && ./deploy-dashboards.sh)
