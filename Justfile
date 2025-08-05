@@ -1,4 +1,4 @@
-import "./test-user-manifest/users.just"
+import "./users/users.just"
 
 bundle := env("OPERATOR_BUNDLE", "quay.io/openshift-observability-ui/observability-ui-operator-bundle:0.4.0")
 
