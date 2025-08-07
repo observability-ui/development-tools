@@ -1,5 +1,5 @@
-# OCP 4.18
-# https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/logging/logging-6-2#quick-start-opentelemetry_logging-6x-6.2
+# Logging 6.3
+# https://docs.redhat.com/en/documentation/red_hat_openshift_logging/6.3/html/configuring_logging/configuring-log-forwarding#setting-up-log-collection_configuring-log-forwarding
 # Prerequisites:
 # Install the :
 #   [] Red Hat OpenShift Logging Operator,
@@ -16,6 +16,9 @@ oc apply -f minio.yaml
 echo " ========= LokiStack Configuration ======== "
 oc apply -f lokistack.yaml
 
+echo " ========= Roles Configuration ======== "
+oc apply -f roles.yaml
+
 # collector service account and RBAC
 echo " ======= Collector Configurguration ======= "
 oc create sa collector -n openshift-logging
@@ -24,6 +27,10 @@ oc project openshift-logging
 oc adm policy add-cluster-role-to-user collect-application-logs -z collector
 oc adm policy add-cluster-role-to-user collect-audit-logs -z collector
 oc adm policy add-cluster-role-to-user collect-infrastructure-logs -z collector
+
+oc adm policy add-cluster-role-to-user cluster-logging-write-application-logs -z collector
+oc adm policy add-cluster-role-to-user cluster-logging-write-audit-logs -z collector
+oc adm policy add-cluster-role-to-user cluster-logging-write-infrastructure-logs -z collector
 
 echo " ==== UI-Plugin Logging Configuration ===== "
 oc apply -f ui_plugin.yaml

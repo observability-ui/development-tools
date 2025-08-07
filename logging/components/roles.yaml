@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-logging-write-application-logs
+rules:
+  - apiGroups:
+      - loki.grafana.com
+    resources:
+      - application
+    resourceNames:
+      - logs
+    verbs:
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-logging-write-audit-logs
+rules:
+  - apiGroups:
+      - loki.grafana.com
+    resources:
+      - audit
+    resourceNames:
+      - logs
+    verbs:
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-logging-write-infrastructure-logs
+rules:
+  - apiGroups:
+      - loki.grafana.com
+    resources:
+      - infrastructure
+    resourceNames:
+      - logs
+    verbs:
+      - create
