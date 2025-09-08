@@ -24,26 +24,26 @@ dashboards:
 	(cd coo && oc apply -f ui-plugin-dashboards.yaml)
 
 korrel8r:
-	printf "\n${GREEN} *** Deploying Logging, Network Observability *** ${ENDCOLOR}\n"
+	printf "\n{{ GREEN }} *** Deploying Logging, Network Observability *** {{ ENDCOLOR }}\n"
 	(cd  korrel8r-manifests && cd openshift && make operators && make resources)
 	(cd  coo && oc apply -f ui-plugin-logging.yaml)
 
 troubleshooting:
-	printf "\n${GREEN} *** Deploying Troubleshooting *** ${ENDCOLOR}\n"
+	printf "\n{{ GREEN }} *** Deploying Troubleshooting *** {{ ENDCOLOR }}\n"
 	(cd coo && oc apply -f ui-plugin-troubleshooting.yaml)
 
 tracing:
-	printf "\n${GREEN} *** Deploying Tracing *** ${ENDCOLOR}\n"
+	printf "\n{{ GREEN }} *** Deploying Tracing *** {{ ENDCOLOR }}\n"
 	(cd  tracing-manifests && make operators && make resources)
 	(cd  coo && oc apply -f ui-plugin-tracing.yaml )
 
 acm:
-	printf "\n${GREEN} *** Deploying ACM Observability *** ${ENDCOLOR}\n"
+	printf "\n{{GREEN}} *** Deploying ACM Observability *** {{ENDCOLOR}}\n"
 	(kubectl apply -k acm/)
 
 OBO:
 	operator-sdk run bundle \
-	${bundle} \
+	{{ bundle }} \
 	--install-mode AllNamespaces \
 	--namespace openshift-operators \
 	--security-context-config restricted
