@@ -1,0 +1,10 @@
+#!/bin/bash
+oc apply -f - <<EOF
+---
+apiVersion: hco.kubevirt.io/v1beta1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+  namespace: openshift-cnv
+spec: {}
+EOF
