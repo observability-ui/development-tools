@@ -1,0 +1,15 @@
+#!/bin/bash
+oc apply -f - <<EOF
+apiVersion: observability.openshift.io/v1alpha1
+kind: UIPlugin
+metadata:
+  name: logging
+spec:
+  type: Logging
+  logging:
+    lokiStack:
+      name: logging-loki
+    logsLimit: 50
+    timeout: 30s
+    schema: select
+EOF
