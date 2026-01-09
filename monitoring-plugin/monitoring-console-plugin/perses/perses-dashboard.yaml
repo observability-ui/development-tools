@@ -1,13 +1,13 @@
-apiVersion: perses.dev/v1alpha1
+apiVersion: perses.dev/v1alpha2
 kind: PersesDashboard
 metadata:
   name: openshift-cluster-sample-dashboard
   namespace: openshift-cluster-observability-operator
 spec:
   display:
-    name: 'Kubernetes / Compute Resources / Cluster'
+    name: "Kubernetes / Compute Resources / Cluster"
   panels:
-    '0_0':
+    "0_0":
       kind: Panel
       spec:
         display:
@@ -33,7 +33,7 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                   query: 'cluster:node_cpu:ratio_rate5m{cluster="$cluster"}'
-    '0_1':
+    "0_1":
       kind: Panel
       spec:
         display:
@@ -58,9 +58,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster="$cluster"})'
-    '0_2':
+    "0_2":
       kind: Panel
       spec:
         display:
@@ -85,9 +86,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster="$cluster"})'
-    '0_3':
+    "0_3":
       kind: Panel
       spec:
         display:
@@ -112,9 +114,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: '1 - sum(:node_memory_MemAvailable_bytes:sum{cluster="$cluster"})
+                  query:
+                    '1 - sum(:node_memory_MemAvailable_bytes:sum{cluster="$cluster"})
                     / sum(node_memory_MemTotal_bytes{job="node-exporter",cluster="$cluster"})'
-    '0_4':
+    "0_4":
       kind: Panel
       spec:
         display:
@@ -139,9 +142,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="memory",cluster="$cluster"})'
-    '0_5':
+    "0_5":
       kind: Panel
       spec:
         display:
@@ -166,9 +170,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="memory",cluster="$cluster"})'
-    '10_0':
+    "10_0":
       kind: Panel
       spec:
         display:
@@ -184,14 +189,15 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'ceil(sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
+                  query:
+                    'ceil(sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", id!="",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     cluster="$cluster", namespace!=""}[$__rate_interval]) +
                     rate(container_fs_writes_total{job="kubelet", metrics_path="/metrics/cadvisor",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval])))'
-                  seriesNameFormat: '{{namespace}}'
-    '10_1':
+                  seriesNameFormat: "{{namespace}}"
+    "10_1":
       kind: Panel
       spec:
         display:
@@ -207,14 +213,15 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", id!="",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     cluster="$cluster", namespace!=""}[$__rate_interval]) +
                     rate(container_fs_writes_bytes_total{job="kubelet", metrics_path="/metrics/cadvisor",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: '{{namespace}}'
-    '11_0':
+                  seriesNameFormat: "{{namespace}}"
+    "11_0":
       kind: Panel
       spec:
         display:
@@ -240,7 +247,7 @@ spec:
                 name: Value #F
               - header: Namespace
                 name: namespace
-              - header: ''
+              - header: ""
                 name: /.*/
         queries:
           - kind: TimeSeriesQuery
@@ -250,11 +257,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -262,11 +270,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_writes_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_writes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -274,14 +283,15 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_reads_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]) +
                     rate(container_fs_writes_total{job="kubelet", metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -289,11 +299,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -301,11 +312,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_writes_bytes_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_writes_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -313,7 +325,8 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
+                  query:
+                    'sum by(namespace) (rate(container_fs_reads_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]) +
@@ -321,8 +334,8 @@ spec:
                     metrics_path="/metrics/cadvisor",
                     device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",
                     id!="", cluster="$cluster", namespace!=""}[$__rate_interval]))'
-                  seriesNameFormat: ''
-    '1_0':
+                  seriesNameFormat: ""
+    "1_0":
       kind: Panel
       spec:
         display:
@@ -352,10 +365,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
+                  query:
+                    'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '2_0':
+                  seriesNameFormat: "{{namespace}}"
+    "2_0":
       kind: Panel
       spec:
         display:
@@ -375,15 +389,15 @@ spec:
                 name: Value #C
               - header: CPU Requests
                 name: Value #D
-              - header: 'CPU Requests %'
+              - header: "CPU Requests %"
                 name: Value #E
               - header: CPU Limits
                 name: Value #F
-              - header: 'CPU Limits %'
+              - header: "CPU Limits %"
                 name: Value #G
               - header: Namespace
                 name: namespace
-              - header: ''
+              - header: ""
                 name: /.*/
         queries:
           - kind: TimeSeriesQuery
@@ -393,9 +407,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(kube_pod_owner{job="kube-state-metrics", cluster="$cluster"})
+                  query:
+                    'sum(kube_pod_owner{job="kube-state-metrics", cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -403,9 +418,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'count(avg(namespace_workload_pod:kube_pod_owner:relabel{cluster="$cluster"})
+                  query:
+                    'count(avg(namespace_workload_pod:kube_pod_owner:relabel{cluster="$cluster"})
                     by (workload, namespace)) by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -413,9 +429,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
+                  query:
+                    'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -423,9 +440,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -433,10 +451,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
+                  query:
+                    'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
                     by (namespace) / sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -444,9 +463,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -454,15 +474,16 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
+                  query:
+                    'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="$cluster"})
                     by (namespace) / sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
-    '3_0':
+                  seriesNameFormat: ""
+    "3_0":
       kind: Panel
       spec:
         display:
-          name: 'Memory Usage (w/o cache)'
+          name: "Memory Usage (w/o cache)"
         plugin:
           kind: TimeSeriesChart
           spec:
@@ -488,10 +509,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
+                  query:
+                    'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
                     cluster="$cluster", container!=""}) by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '4_0':
+                  seriesNameFormat: "{{namespace}}"
+    "4_0":
       kind: Panel
       spec:
         display:
@@ -511,15 +533,15 @@ spec:
                 name: Value #C
               - header: Memory Requests
                 name: Value #D
-              - header: 'Memory Requests %'
+              - header: "Memory Requests %"
                 name: Value #E
               - header: Memory Limits
                 name: Value #F
-              - header: 'Memory Limits %'
+              - header: "Memory Limits %"
                 name: Value #G
               - header: Namespace
                 name: namespace
-              - header: ''
+              - header: ""
                 name: /.*/
         queries:
           - kind: TimeSeriesQuery
@@ -529,9 +551,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(kube_pod_owner{job="kube-state-metrics", cluster="$cluster"})
+                  query:
+                    'sum(kube_pod_owner{job="kube-state-metrics", cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -539,9 +562,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'count(avg(namespace_workload_pod:kube_pod_owner:relabel{cluster="$cluster"})
+                  query:
+                    'count(avg(namespace_workload_pod:kube_pod_owner:relabel{cluster="$cluster"})
                     by (workload, namespace)) by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -549,9 +573,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
+                  query:
+                    'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
                     cluster="$cluster", container!=""}) by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -559,9 +584,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -569,11 +595,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
+                  query:
+                    'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
                     cluster="$cluster", container!=""}) by (namespace) /
                     sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -581,9 +608,10 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster="$cluster"})
+                  query:
+                    'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -591,12 +619,13 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
+                  query:
+                    'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor",
                     cluster="$cluster", container!=""}) by (namespace) /
                     sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster="$cluster"})
                     by (namespace)'
-                  seriesNameFormat: ''
-    '5_0':
+                  seriesNameFormat: ""
+    "5_0":
       kind: Panel
       spec:
         display:
@@ -622,7 +651,7 @@ spec:
                 name: Value #F
               - header: Namespace
                 name: namespace
-              - header: ''
+              - header: ""
                 name: /.*/
         queries:
           - kind: TimeSeriesQuery
@@ -632,10 +661,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_bytes_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -643,10 +673,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_bytes_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -654,10 +685,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_packets_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_packets_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -665,10 +697,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_packets_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_packets_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -676,10 +709,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_packets_dropped_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_packets_dropped_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
+                  seriesNameFormat: ""
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -687,11 +721,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_packets_dropped_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_packets_dropped_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: ''
-    '6_0':
+                  seriesNameFormat: ""
+    "6_0":
       kind: Panel
       spec:
         display:
@@ -707,11 +742,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_bytes_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '6_1':
+                  seriesNameFormat: "{{namespace}}"
+    "6_1":
       kind: Panel
       spec:
         display:
@@ -727,15 +763,16 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_bytes_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '7_0':
+                  seriesNameFormat: "{{namespace}}"
+    "7_0":
       kind: Panel
       spec:
         display:
-          name: 'Average Container Bandwidth by Namespace: Received'
+          name: "Average Container Bandwidth by Namespace: Received"
         plugin:
           kind: TimeSeriesChart
           spec: {}
@@ -747,15 +784,16 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'avg(irate(container_network_receive_bytes_total{job="kubelet",
+                  query:
+                    'avg(irate(container_network_receive_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '7_1':
+                  seriesNameFormat: "{{namespace}}"
+    "7_1":
       kind: Panel
       spec:
         display:
-          name: 'Average Container Bandwidth by Namespace: Transmitted'
+          name: "Average Container Bandwidth by Namespace: Transmitted"
         plugin:
           kind: TimeSeriesChart
           spec: {}
@@ -767,11 +805,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'avg(irate(container_network_transmit_bytes_total{job="kubelet",
+                  query:
+                    'avg(irate(container_network_transmit_bytes_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '8_0':
+                  seriesNameFormat: "{{namespace}}"
+    "8_0":
       kind: Panel
       spec:
         display:
@@ -787,11 +826,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_packets_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_packets_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '8_1':
+                  seriesNameFormat: "{{namespace}}"
+    "8_1":
       kind: Panel
       spec:
         display:
@@ -807,11 +847,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_packets_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_packets_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '9_0':
+                  seriesNameFormat: "{{namespace}}"
+    "9_0":
       kind: Panel
       spec:
         display:
@@ -827,11 +868,12 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_receive_packets_dropped_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_receive_packets_dropped_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
-    '9_1':
+                  seriesNameFormat: "{{namespace}}"
+    "9_1":
       kind: Panel
       spec:
         display:
@@ -847,10 +889,11 @@ spec:
                 spec:
                   datasource:
                     kind: PrometheusDatasource
-                  query: 'sum(irate(container_network_transmit_packets_dropped_total{job="kubelet",
+                  query:
+                    'sum(irate(container_network_transmit_packets_dropped_total{job="kubelet",
                     metrics_path="/metrics/cadvisor", cluster="$cluster", namespace=~".+"}[$__rate_interval]))
                     by (namespace)'
-                  seriesNameFormat: '{{namespace}}'
+                  seriesNameFormat: "{{namespace}}"
   layouts:
     - kind: Grid
       spec:
@@ -864,37 +907,37 @@ spec:
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_0'
+              $ref: "#/spec/panels/0_0"
           - x: 8
             y: 0
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_1'
+              $ref: "#/spec/panels/0_1"
           - x: 0
             y: 6
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_2'
+              $ref: "#/spec/panels/0_2"
           - x: 8
             y: 6
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_3'
+              $ref: "#/spec/panels/0_3"
           - x: 16
             y: 6
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_4'
+              $ref: "#/spec/panels/0_4"
           - x: 16
             y: 0
             width: 8
             height: 6
             content:
-              $ref: '#/spec/panels/0_5'
+              $ref: "#/spec/panels/0_5"
     - kind: Grid
       spec:
         display:
@@ -907,7 +950,7 @@ spec:
             width: 24
             height: 12
             content:
-              $ref: '#/spec/panels/1_0'
+              $ref: "#/spec/panels/1_0"
     - kind: Grid
       spec:
         display:
@@ -920,7 +963,7 @@ spec:
             width: 24
             height: 12
             content:
-              $ref: '#/spec/panels/2_0'
+              $ref: "#/spec/panels/2_0"
     - kind: Grid
       spec:
         display:
@@ -933,7 +976,7 @@ spec:
             width: 24
             height: 12
             content:
-              $ref: '#/spec/panels/3_0'
+              $ref: "#/spec/panels/3_0"
     - kind: Grid
       spec:
         display:
@@ -946,7 +989,7 @@ spec:
             width: 24
             height: 12
             content:
-              $ref: '#/spec/panels/4_0'
+              $ref: "#/spec/panels/4_0"
     - kind: Grid
       spec:
         display:
@@ -959,7 +1002,7 @@ spec:
             width: 24
             height: 12
             content:
-              $ref: '#/spec/panels/5_0'
+              $ref: "#/spec/panels/5_0"
     - kind: Grid
       spec:
         display:
@@ -972,13 +1015,13 @@ spec:
             width: 12
             height: 12
             content:
-              $ref: '#/spec/panels/6_0'
+              $ref: "#/spec/panels/6_0"
           - x: 12
             y: 0
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/6_1'
+              $ref: "#/spec/panels/6_1"
     - kind: Grid
       spec:
         display:
@@ -991,13 +1034,13 @@ spec:
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/7_0'
+              $ref: "#/spec/panels/7_0"
           - x: 12
             y: 0
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/7_1'
+              $ref: "#/spec/panels/7_1"
     - kind: Grid
       spec:
         display:
@@ -1010,13 +1053,13 @@ spec:
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/8_0'
+              $ref: "#/spec/panels/8_0"
           - x: 12
             y: 0
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/8_1'
+              $ref: "#/spec/panels/8_1"
     - kind: Grid
       spec:
         display:
@@ -1029,13 +1072,13 @@ spec:
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/9_0'
+              $ref: "#/spec/panels/9_0"
           - x: 12
             y: 0
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/9_1'
+              $ref: "#/spec/panels/9_1"
     - kind: Grid
       spec:
         display:
@@ -1048,13 +1091,13 @@ spec:
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/10_0'
+              $ref: "#/spec/panels/10_0"
           - x: 12
             y: 0
             width: 12
             height: 7
             content:
-              $ref: '#/spec/panels/10_1'
+              $ref: "#/spec/panels/10_1"
     - kind: Grid
       spec:
         display:
@@ -1067,7 +1110,7 @@ spec:
             width: 24
             height: 7
             content:
-              $ref: '#/spec/panels/11_0'
+              $ref: "#/spec/panels/11_0"
   variables:
     - kind: ListVariable
       spec:

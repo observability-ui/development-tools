@@ -1,4 +1,4 @@
-apiVersion: perses.dev/v1alpha1
+apiVersion: perses.dev/v1alpha2
 kind: PersesDatasource
 metadata:
   name: perses-datasource-sample
@@ -6,9 +6,9 @@ metadata:
 spec:
   config:
     display:
-      name: 'Default Datasource'
+      name: "Default Datasource"
     default: true
     plugin:
-      kind: 'PrometheusDatasource'
+      kind: "PrometheusDatasource"
       spec:
-        directUrl: 'https://prometheus.demo.prometheus.io'
+        directUrl: "https://prometheus.demo.prometheus.io"
