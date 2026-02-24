@@ -1,7 +1,8 @@
 #!/bin/bash
 oc new-project perses-dev
 oc new-project observ-test
-oc new-project empty-namespace
+oc new-project empty-namespace3
+oc new-project empty-namespace4
 
 oc apply -f - <<EOF
 apiVersion: v1
@@ -1278,7 +1279,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: user3-editor-dashboard
-  namespace: empty-namespace
+  namespace: empty-namespace3
 subjects:
   - kind: User
     apiGroup: rbac.authorization.k8s.io
@@ -1294,7 +1295,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: user4-viewer-dashboard
-  namespace: empty-namespace
+  namespace: empty-namespace4
 subjects:
   - kind: User
     apiGroup: rbac.authorization.k8s.io
@@ -1358,7 +1359,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: user3-editor-datasource
-  namespace: empty-namespace
+  namespace: empty-namespace3
 subjects:
   - kind: User
     apiGroup: rbac.authorization.k8s.io
@@ -1374,7 +1375,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: user4-viewer-datasource
-  namespace: empty-namespace
+  namespace: empty-namespace4
 subjects:
   - kind: User
     apiGroup: rbac.authorization.k8s.io
