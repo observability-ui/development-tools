@@ -1,0 +1,362 @@
+apiVersion: perses.dev/v1alpha1
+kind: PersesDashboard
+metadata:
+  labels:
+    app.kubernetes.io/name: perses-dashboard
+    app.kubernetes.io/instance: eve1234
+    app.kubernetes.io/part-of: perses-operator
+  name: mix
+  namespace: openshift-monitoring
+spec:
+  display:
+    name: evelyn testing - prometheus tempo logs
+  panels:
+    2ae6af9385b74280b00978aa304ce3bb:
+      kind: Panel
+      spec:
+        display:
+          name: time series table
+        plugin:
+          kind: TimeSeriesTable
+          spec: {}
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    31b8374866184a26beddf46ec30df0b5:
+      kind: Panel
+      spec:
+        display:
+          name: table
+        plugin:
+          kind: Table
+          spec:
+            density: standard
+            enableFiltering: true
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    57ce686052c9464fa9486ff49d3757cd:
+      kind: Panel
+      spec:
+        display:
+          name: "scat "
+        plugin:
+          kind: StatChart
+          spec:
+            calculation: last-number
+            format:
+              unit: decimal
+            legendMode: auto
+            sparkline: {}
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    626437cc3e1a46fd84a6a690923c3531:
+      kind: Panel
+      spec:
+        display:
+          name: gauge
+        plugin:
+          kind: GaugeChart
+          spec:
+            calculation: last-number
+            format:
+              unit: percent-decimal
+            thresholds:
+              steps:
+                - value: 0.8
+                - value: 0.9
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    940582f41e824aa3bc10f2d0454af98a:
+      kind: Panel
+      spec:
+        display:
+          name: markdown
+        plugin:
+          kind: Markdown
+          spec:
+            text: <marquee bgcolor='red'> eve </marquee>
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    9877adfad20947e5b0af761cdad2b246:
+      kind: Panel
+      spec:
+        display:
+          name: pie chart
+        plugin:
+          kind: PieChart
+          spec:
+            calculation: last
+            format:
+              shortValues: true
+              unit: decimal
+            mode: value
+            radius: 50
+            showLabels: false
+            sort: desc
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    99778df0db9b4855ae0cda2cc7eb731f:
+      kind: Panel
+      spec:
+        display:
+          name: bar chart
+        plugin:
+          kind: BarChart
+          spec:
+            calculation: last
+            format:
+              shortValues: true
+              unit: decimal
+            mode: value
+            sort: desc
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: up
+    c03e17f849d341bcb1139c65e68dad1d:
+      kind: Panel
+      spec:
+        display:
+          name: status history
+        plugin:
+          kind: StatusHistoryChart
+          spec: {}
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: vector(1)
+    cd8033b1834344f4af393747c15ca43a:
+      kind: Panel
+      spec:
+        display:
+          name: Scatter Chart - Tempo Global Datasource
+        plugin:
+          kind: ScatterChart
+          spec: {}
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: TempoTraceQuery
+                spec:
+                  limit: 100
+                  query: "{}"
+    fe3daafde11440ca87cce136b7441856:
+      kind: Panel
+      spec:
+        display:
+          name: Trace Table - Tempo Global Datasource
+        plugin:
+          kind: TraceTable
+          spec:
+            actions:
+              actionsList:
+                - batchMode: individual
+                  confirmMessage: it could go to gantt chart
+                  enabled: true
+                  eventName: selection-action
+                  icon: send
+                  name: New Event Action
+                  type: event
+              displayInHeader: true
+              displayWithItem: true
+              enabled: true
+            selection:
+              enabled: true
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: TempoTraceQuery
+                spec:
+                  limit: 100
+                  query: "{}"
+    e2af0122c04b459db8293c79575a2f73:
+      kind: Panel
+      spec:
+        display:
+          name: ""
+        plugin:
+          kind: LogsTable
+          spec:
+            showTime: true
+            allowWrap: true
+            enableDetails: true
+            selection:
+              enabled: true
+            actions:
+              enabled: true
+              displayInHeader: true
+              displayWithItem: true
+              actionsList:
+                - type: event
+                  name: New Event Action
+                  eventName: selection-action
+                  batchMode: individual
+                  enabled: true
+                  icon: send
+                  confirmMessage: it could go to somewhere else
+        queries:
+          - kind: LogQuery
+            spec:
+              plugin:
+                kind: LokiLogQuery
+                spec:
+                  query: '{ log_type="application" } | json'
+  layouts:
+    - kind: Grid
+      spec:
+        display:
+          title: Row 3
+          collapse:
+            open: true
+        items:
+          - x: 18
+            "y": 33
+            width: 6
+            height: 6
+            content:
+              $ref: "#/spec/panels/99778df0db9b4855ae0cda2cc7eb731f"
+          - x: 13
+            "y": 33
+            width: 5
+            height: 6
+            content:
+              $ref: "#/spec/panels/626437cc3e1a46fd84a6a690923c3531"
+          - x: 6
+            "y": 33
+            width: 5
+            height: 6
+            content:
+              $ref: "#/spec/panels/940582f41e824aa3bc10f2d0454af98a"
+          - x: 0
+            "y": 39
+            width: 24
+            height: 9
+            content:
+              $ref: "#/spec/panels/9877adfad20947e5b0af761cdad2b246"
+          - x: 0
+            "y": 33
+            width: 6
+            height: 6
+            content:
+              $ref: "#/spec/panels/57ce686052c9464fa9486ff49d3757cd"
+          - x: 0
+            "y": 48
+            width: 12
+            height: 6
+            content:
+              $ref: "#/spec/panels/c03e17f849d341bcb1139c65e68dad1d"
+          - x: 12
+            "y": 48
+            width: 12
+            height: 6
+            content:
+              $ref: "#/spec/panels/31b8374866184a26beddf46ec30df0b5"
+          - x: 0
+            "y": 54
+            width: 12
+            height: 6
+            content:
+              $ref: "#/spec/panels/2ae6af9385b74280b00978aa304ce3bb"
+          - x: 0
+            "y": 0
+            width: 24
+            height: 12
+            content:
+              $ref: "#/spec/panels/fe3daafde11440ca87cce136b7441856"
+          - x: 0
+            "y": 12
+            width: 24
+            height: 9
+            content:
+              $ref: "#/spec/panels/cd8033b1834344f4af393747c15ca43a"
+          - x: 0
+            "y": 21
+            width: 24
+            height: 12
+            content:
+              $ref: "#/spec/panels/e2af0122c04b459db8293c79575a2f73"
+  variables:
+    - kind: ListVariable
+      spec:
+        defaultValue: node-exporter
+        allowAllValue: false
+        allowMultiple: false
+        sort: none
+        plugin:
+          kind: PrometheusLabelValuesVariable
+          spec:
+            labelName: job
+        name: job
+    - kind: ListVariable
+      spec:
+        defaultValue: ip-10-0-11-36.us-east-2.compute.internal
+        allowAllValue: false
+        allowMultiple: false
+        sort: none
+        plugin:
+          kind: PrometheusLabelValuesVariable
+          spec:
+            labelName: instance
+            matchers:
+              - up{job=~"$job"}
+        name: instance
+    - kind: ListVariable
+      spec:
+        defaultValue: 1m
+        allowAllValue: false
+        allowMultiple: false
+        sort: none
+        plugin:
+          kind: StaticListVariable
+          spec:
+            values:
+              - label: 1m
+                value: 1m
+              - label: 5m
+                value: 5m
+        name: interval
+    - kind: TextVariable
+      spec:
+        value: test
+        constant: true
+        name: text
+  duration: 30m
+  refreshInterval: 0s
+  datasources: {}
