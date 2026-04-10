@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avalanche
+  namespace: test-metrics
+  labels:
+    app: avalanche
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avalanche
+  template:
+    metadata:
+      labels:
+        app: avalanche
+    spec:
+      containers:
+        - name: avalanche
+          image: quay.io/prometheuscommunity/avalanche:main
+          args:
+            - --gauge-metric-count=50
+            - --counter-metric-count=30
+            - --histogram-metric-count=10
+            - --summary-metric-count=10
+            - --series-count=5
+            - --port=9001
+          ports:
+            - containerPort: 9001
+              name: metrics
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: avalanche
+  namespace: test-metrics
+  labels:
+    app: avalanche
+spec:
+  selector:
+    app: avalanche
+  ports:
+    - name: metrics
+      port: 9001
+      targetPort: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: avalanche
+  namespace: test-metrics
+  labels:
+    app: avalanche
+spec:
+  selector:
+    matchLabels:
+      app: avalanche
+  endpoints:
+    - port: metrics
+      interval: 15s
+      path: /metrics
