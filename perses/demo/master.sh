@@ -42,6 +42,6 @@ echo "=== 6. tempo_loki_thanos_persesglobaldatasource.sh ==="
 bash "${_DEMO_DIR}/z_tempo_loki_thanos_persesglobaldatasource.sh"
 
 echo "=== 7. dashboards.sh ==="
-bash "${_DEMO_DIR}/../dashboards/dashboards.sh"
+bash "${_DEMO_DIR}/../rbac/coo140/dashboards/dashboards.sh"
 
 echo "Done (master.sh)."

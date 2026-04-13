@@ -29,10 +29,7 @@ YAML_FILES=(
     "perses-dashboard-sample.yaml"
     "prometheus-overview-variables.yaml"
     "thanos-compact-overview-1var.yaml"
-    "perses-datasource-sample.yaml"
     "thanos-querier-datasource.yaml"
-    "lmd6v93sz-acm-dashboard.yaml"
-    "nodeexporterfull-cr-v1alpha2.yaml"
 )
 
 # Apply each file with namespace replaced
