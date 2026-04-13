@@ -1,0 +1,181 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "createdAt": "2026-04-13T17:47:39.867399288Z",
+    "name": "tempo_loki_perses_global_datasources_yaml_import",
+    "project": "default",
+    "updatedAt": "2026-04-13T17:47:39.867399288Z",
+    "version": 0
+  },
+  "spec": {
+    "display": {
+      "name": "Tempo Loki Perses Global Datasources - YAML Import"
+    },
+    "panels": {
+      "82e164e550e84a72b062d0a7d2cb0f3e": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "This is a trace table test",
+            "name": "Tempo - Trace Table"
+          },
+          "plugin": {
+            "kind": "TraceTable",
+            "spec": {}
+          },
+          "queries": [
+            {
+              "kind": "TraceQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "TempoTraceQuery",
+                  "spec": {
+                    "limit": 20,
+                    "query": "{}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "a10cea99a1aa4f80bfe4320ccf2fc8de": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "This is a logs table test",
+            "name": "Loki - Logs Table"
+          },
+          "plugin": {
+            "kind": "LogsTable",
+            "spec": {
+              "allowWrap": true,
+              "enableDetails": true,
+              "showTime": true
+            }
+          },
+          "queries": [
+            {
+              "kind": "LogQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "LokiLogQuery",
+                  "spec": {
+                    "query": "{ log_type=\"application\" } | json"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "e3ed41a6d007492787bafa4dbc527610": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "This is a scatter chart test",
+            "name": "Tempo - Scatter Chart"
+          },
+          "plugin": {
+            "kind": "ScatterChart",
+            "spec": {}
+          },
+          "queries": [
+            {
+              "kind": "TraceQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "TempoTraceQuery",
+                  "spec": {
+                    "limit": 20,
+                    "query": "{}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "af204b3f611e4fd0a17ec9200b596bad": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Prometheus Time Series"
+          },
+          "plugin": {
+            "kind": "TimeSeriesTable",
+            "spec": {}
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "up"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Panel Group Up",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 12,
+              "width": 12,
+              "height": 10,
+              "content": {
+                "$ref": "#/spec/panels/e3ed41a6d007492787bafa4dbc527610"
+              }
+            },
+            {
+              "x": 12,
+              "y": 12,
+              "width": 12,
+              "height": 10,
+              "content": {
+                "$ref": "#/spec/panels/82e164e550e84a72b062d0a7d2cb0f3e"
+              }
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 12,
+              "content": {
+                "$ref": "#/spec/panels/a10cea99a1aa4f80bfe4320ccf2fc8de"
+              }
+            },
+            {
+              "x": 0,
+              "y": 22,
+              "width": 24,
+              "height": 10,
+              "content": {
+                "$ref": "#/spec/panels/af204b3f611e4fd0a17ec9200b596bad"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "variables": [],
+    "duration": "1h",
+    "refreshInterval": "30s",
+    "datasources": {}
+  }
+}
