@@ -84,12 +84,18 @@
     
     # echo "${GREEN}Granting policy add-role-to-user view ${ENDCOLOR}  " 
     oc -n ${NAMESPACE} policy add-role-to-user view ${USER1}
+
+    oc adm policy add-cluster-role-to-user cluster-logging-application-view ${USER1}
+    oc adm policy add-cluster-role-to-user cluster-logging-audit-view ${USER1}
+    oc adm policy add-cluster-role-to-user cluster-logging-infrastructure-view ${USER1}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-logging-application-view ${ENDCOLOR}  " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-logging-application-view ${USER1}
     
     # echo "${GREEN}Granting policy add-role-to-user monitoring-rules-edit ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER1}
+    oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER1}
+
+    oc -n openshift-monitoring policy add-role-to-user monitoring-alertmanager-edit ${USER1}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-monitoring-view ${ENDCOLOR} " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-monitoring-view  ${USER1}
@@ -100,11 +106,14 @@
     # echo "${GREEN}Granting policy add-role-to-user view ${ENDCOLOR}  " 
     oc -n ${NAMESPACE} policy add-role-to-user view ${USER2}
     
-    # echo "${GREEN}Granting policy add-role-to-user cluster-logging-application-view ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user cluster-logging-application-view ${USER1}
+    oc adm policy add-cluster-role-to-user cluster-logging-application-view ${USER2}
+    oc adm policy add-cluster-role-to-user cluster-logging-audit-view ${USER2}
+    oc adm policy add-cluster-role-to-user cluster-logging-infrastructure-view ${USER2}
     
     # echo "${GREEN}Granting policy add-role-to-user monitoring-rules-edit ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER1}
+    oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER2}
+
+    oc -n openshift-monitoring policy add-role-to-user monitoring-alertmanager-edit ${USER2}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-monitoring-view ${ENDCOLOR} " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-monitoring-view  ${USER1}
@@ -114,12 +123,18 @@
     
     # echo "${GREEN}Granting policy add-role-to-user view ${ENDCOLOR}  " 
     oc -n ${NAMESPACE} policy add-role-to-user view ${USER3}
+
+    oc adm policy add-cluster-role-to-user cluster-logging-application-view ${USER3}
+    oc adm policy add-cluster-role-to-user cluster-logging-audit-view ${USER3}
+    oc adm policy add-cluster-role-to-user cluster-logging-infrastructure-view ${USER3}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-logging-application-view ${ENDCOLOR}  " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-logging-application-view ${USER3}
     
     # echo "${GREEN}Granting policy add-role-to-user monitoring-rules-edit ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER3}
+    oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER3}
+
+    oc -n openshift-monitoring policy add-role-to-user monitoring-alertmanager-edit ${USER3}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-monitoring-view ${ENDCOLOR} " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-monitoring-view  ${USER3}
@@ -129,12 +144,18 @@
     
     # echo "${GREEN}Granting policy add-role-to-user view ${ENDCOLOR}  " 
     oc -n ${NAMESPACE} policy add-role-to-user view ${USER4}
+
+    oc adm policy add-cluster-role-to-user cluster-logging-application-view ${USER4}
+    oc adm policy add-cluster-role-to-user cluster-logging-audit-view ${USER4}
+    oc adm policy add-cluster-role-to-user cluster-logging-infrastructure-view ${USER4}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-logging-application-view ${ENDCOLOR}  " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-logging-application-view ${USER4}
     
     # echo "${GREEN}Granting policy add-role-to-user monitoring-rules-edit ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER4}
+    oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER4}
+
+    oc -n openshift-monitoring policy add-role-to-user monitoring-alertmanager-edit ${USER4}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-monitoring-view ${ENDCOLOR} " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-monitoring-view  ${USER4}
@@ -145,11 +166,17 @@
     # echo "${GREEN}Granting policy add-role-to-user admin ${ENDCOLOR}  " 
     oc -n ${NAMESPACE} policy add-role-to-user admin ${USER5}
     
+    oc adm policy add-cluster-role-to-user cluster-logging-application-view ${USER5}
+    oc adm policy add-cluster-role-to-user cluster-logging-audit-view ${USER5}
+    oc adm policy add-cluster-role-to-user cluster-logging-infrastructure-view ${USER5}
+    
     # echo "${GREEN}Granting policy add-role-to-user cluster-logging-application-view ${ENDCOLOR}  " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-logging-application-view ${USER5}
     
     # echo "${GREEN}Granting policy add-role-to-user monitoring-rules-edit ${ENDCOLOR}  " 
-    # oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER5}
+    oc -n ${NAMESPACE} policy add-role-to-user monitoring-rules-edit ${USER5}
+
+    oc -n openshift-monitoring policy add-role-to-user monitoring-alertmanager-edit ${USER5}
     
     # echo "${GREEN}Granting policy add-role-to-user cluster-monitoring-view ${ENDCOLOR} " 
     # oc -n ${NAMESPACE} policy add-role-to-user cluster-monitoring-view  ${USER5}
