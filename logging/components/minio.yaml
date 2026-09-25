@@ -50,23 +50,22 @@ spec:
         app.kubernetes.io/name: minio
     spec:
       containers:
-      - command:
-        - /bin/sh
-        - -c
-        - |
-          mkdir -p /storage/loki && \
-          minio server /storage
-        env:
-        - name: MINIO_ACCESS_KEY
+      # The upstream minio/minio image (quay.io and docker.io) no longer allows
+      # anonymous pulls, so use the public bitnamilegacy archive image instead.
+      - env:
+        - name: MINIO_ROOT_USER
           value: minio
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           value: minio123
-        image: quay.io/minio/minio
+        - name: MINIO_DEFAULT_BUCKETS
+          value: loki
+        image: docker.io/bitnamilegacy/minio:2025.7.23-debian-12-r5
         name: minio
         ports:
         - containerPort: 9000
+        - containerPort: 9001
         volumeMounts:
-        - mountPath: /storage
+        - mountPath: /bitnami/minio/data
           name: storage
       volumes:
       - name: storage
