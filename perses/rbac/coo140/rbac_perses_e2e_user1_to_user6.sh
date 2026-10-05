@@ -1226,6 +1226,12 @@ roleRef:
   name: persesglobaldatasource-viewer-role
 EOF
 
+oc -n observ-test policy add-role-to-user view user1
+oc -n openshift-cluster-observability-operator policy add-role-to-user view user1
+oc -n perses-dev policy add-role-to-user view user2
+oc -n empty-namespace3 policy add-role-to-user view user3
+oc -n empty-namespace4 policy add-role-to-user view user4
+
 oc apply -f - <<EOF
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
