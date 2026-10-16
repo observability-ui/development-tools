@@ -1,20 +1,33 @@
+# Test log generator: emits a known, searchable message every 5 s so the
+# merged-logging flow has something to query for. Applied by
+# setup-logging-stack.sh.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: merged-logging-test
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: random-logger
+  name: log-generator
+  namespace: merged-logging-test
   labels:
-    app: random-logger
+    app: log-generator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: random-logger
+      app: log-generator
   template:
     metadata:
       labels:
-        app: random-logger
+        app: log-generator
     spec:
       containers:
-        - name: random-logger
-          image: chentex/random-logger:latest
-          imagePullPolicy: Always
+      - name: logger
+        image: registry.access.redhat.com/ubi9/ubi-minimal:9.6
+        command: ["/bin/sh", "-c", "while true; do echo \"merged-logging-test $(date -u)\"; sleep 5; done"]
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
