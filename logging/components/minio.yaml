@@ -49,12 +49,6 @@ spec:
       labels:
         app.kubernetes.io/name: minio
     spec:
-      # quay.io/minio/minio is access-restricted (unauthorized even with a
-      # valid quay login); quay.io/minio/aistor/minio is MinIO's publicly
-      # pullable publish of the same server. It has no shell (ubi9-micro), so
-      # an initContainer pre-creates the loki bucket the Loki operator
-      # expects. Non-root: OpenShift SCCs allocate the pod UID/fsGroup from
-      # namespace ranges, so none is pinned here.
       initContainers:
       - name: create-bucket
         image: registry.access.redhat.com/ubi9/ubi-minimal:9.6

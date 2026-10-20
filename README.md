@@ -4,17 +4,17 @@ A centralized location for the openshift observability-ui team to keep developme
 ## Merged logging test setup
 
 To set up a fresh development cluster with Loki, collection and test logs, run
-`./logging/setup-logging-stack.sh` (or `just logging-stack`). The merged-logging UI
+`just logging-stack`, or follow the scripts in the logging setup guide. The merged-logging UI
 is not deployed on the cluster: run it locally from the monitoring-plugin
 checkout with `make start-mcp-console`.
 See [logging setup](logging/README.md#test-merged-logging-in-monitoring-console-plugin)
 for prerequisites, overrides and limitations.
 
 ## Development
-This repo uses a [Justfile](https://github.com/casey/just) to maintain it's commands. To pass your own image of the observability operator bundle use the flag `OPERATOR_BUNDLE`. For example:
+This repo uses a [Justfile](https://github.com/casey/just) to maintain it's commands. To pass your own image of the observability operator bundle set the environment variable `OPERATOR_BUNDLE`. For example:
 
 ```bash
-just OBO OPERATOR_BUNDLE="quay.io/test/observability-operator-bundle"
+OPERATOR_BUNDLE="quay.io/test/observability-operator-bundle" just OBO
 ```
 
 The repo uses an up/down system for manipulating your cluster, for example:

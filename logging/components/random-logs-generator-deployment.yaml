@@ -1,6 +1,6 @@
 # Test log generator: emits a known, searchable message every 5 s so the
 # merged-logging flow has something to query for. Applied by
-# setup-logging-stack.sh.
+# components/start.sh.
 apiVersion: v1
 kind: Namespace
 metadata:

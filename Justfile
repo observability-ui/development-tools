@@ -20,7 +20,7 @@ test-user:
 	cd users && ./create-htpsswd-auth.sh
 
 logging-stack:
-	(cd logging && ./setup-logging-stack.sh)
+	./logging/components/start.sh
 
 dashboards:
 	(cd dashboards-manifests && ./deploy-dashboards.sh)
