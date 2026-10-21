@@ -67,12 +67,12 @@ for role in "${collector_roles[@]}"; do
     oc adm policy add-cluster-role-to-user "$role" -z collector -n openshift-logging
 done
 
-if [[ "$deploy_ui_plugin" == true ]]; then
-    echo 'Deploying logging UIPlugin'
-    oc apply -f ui_plugin.yaml
-fi
-
 echo 'Deploying ClusterLogForwarder'
 oc apply -f "${data_model}_cluster_log_forwarder.yaml"
 oc wait clusterlogforwarder.observability.openshift.io/collector -n openshift-logging \
     --for=jsonpath='{.status.conditions[?(@.type=="Ready")].status}'=True --timeout=5m
+
+if [[ "$deploy_ui_plugin" == true ]]; then
+    echo 'Deploying logging UIPlugin'
+    oc apply -f ui_plugin.yaml
+fi
