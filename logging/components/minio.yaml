@@ -49,19 +49,26 @@ spec:
       labels:
         app.kubernetes.io/name: minio
     spec:
-      containers:
-      - command:
+      initContainers:
+      - name: create-bucket
+        image: registry.access.redhat.com/ubi9/ubi-minimal:9.6
+        command:
         - /bin/sh
         - -c
-        - |
-          mkdir -p /storage/loki && \
-          minio server /storage
+        - mkdir -p /storage/loki
+        volumeMounts:
+        - mountPath: /storage
+          name: storage
+      containers:
+      - args:
+        - server
+        - /storage
         env:
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           value: minio
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           value: minio123
-        image: quay.io/minio/minio
+        image: quay.io/minio/aistor/minio:latest
         name: minio
         ports:
         - containerPort: 9000

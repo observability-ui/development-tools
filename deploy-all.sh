@@ -35,13 +35,13 @@ deploy_observability_operator() {
 }
 
 deploy_dashboards() {
-    (cd dashboards && ./deploy-dashboards.sh)
+    (cd dashboards-manifests && ./deploy-dashboards.sh)
     (cd coo && oc apply -f ui-plugin-dashboards.yaml)
 }
 
 deploy_korrel8r() {
     printf "\n${GREEN} *** Deploying Korrel8r, Logging, Network Observability *** ${ENDCOLOR}\n"
-    (cd korrel8r && cd openshift && make operators && make resources)
+    (cd korrel8r-manifests/openshift && make operators && make resources)
     (cd coo && oc apply -f ui-plugin-logging.yaml)
 }
 
@@ -52,7 +52,7 @@ deploy_troubleshooting() {
 
 deploy_tracing() {
     printf "\n${GREEN} *** Deploying Tracing *** ${ENDCOLOR}\n"
-    (cd tracing && make operators && make resources)
+    (cd tracing-manifests && make operators && make resources)
     (cd coo && oc apply -f ui-plugin-tracing.yaml)
 }
 

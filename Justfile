@@ -19,6 +19,9 @@ monitoring-cleanup:
 test-user:
 	cd users && ./create-htpsswd-auth.sh
 
+logging-stack:
+	./logging/components/start.sh
+
 dashboards:
 	(cd dashboards-manifests && ./deploy-dashboards.sh)
 	(cd coo && oc apply -f ui-plugin-dashboards.yaml)

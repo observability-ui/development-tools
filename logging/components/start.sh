@@ -1,42 +1,55 @@
 #!/bin/bash
+set -Eeuo pipefail
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
-# Questions, options, and answers
-question=(
-    "Which data model do you want to configure?"
-)
-options=(
-    "a) otel b) viaQ"
-)
-
-score=0
-num_questions=${#question[@]}
-
-# Loop for asking just the first question
-for i in 0; do
-    echo
-    echo "${question[$i]}"
-    echo "${options[$i]}"
-
+ask_yes_no() {
     while true; do
-        read -p "Enter your choice (a or b): " choice
-        case $choice in
-        a | b)
-            break
-            ;;
-        *)
-            echo "Invalid input. Please enter a or b."
-            ;;
+        read -r -p "$1 [y/n]: " answer
+        case "$answer" in
+            y|n) return ;;
+            *) echo 'Please enter y or n.' ;;
         esac
     done
+}
 
-    # Translate choice to index (1 for 'a' or 2 for 'b')
-    choice_index=$(($(echo "$choice" | tr 'ab' '12') - 0))
+echo 'Logging setup for a fresh disposable cluster. Existing configuration may be overwritten.'
+ask_yes_no 'Install Loki and Logging operators automatically?'
+install_operators=$answer
 
-    if [ "$choice_index" -eq 1 ]; then
-        ./deploy.sh "otel"
-    else
-        ./deploy.sh "viaq"
-    fi
+if [[ "$install_operators" == n ]]; then
+    echo 'Install Loki and Logging operators manually, or use existing ready operators.'
+    read -r -p 'Press Enter once both operators are ready to continue: '
+fi
+
+while true; do
+    echo 'Which data model do you want to configure?'
+    read -r -p 'a) OpenTelemetry  b) ViaQ: ' choice
+    case "$choice" in
+        a) data_model=otel; break ;;
+        b) data_model=viaq; break ;;
+        *) echo 'Please enter a or b.' ;;
+    esac
 done
 
-exit 0
+# An explicit environment setting skips this question.
+if [[ -z ${DEPLOY_UI_PLUGIN:-} ]]; then
+    ask_yes_no 'Deploy the cluster logging UIPlugin (requires COO; not needed for the local UI)?'
+    if [[ "$answer" == y ]]; then
+        export DEPLOY_UI_PLUGIN=true
+    else
+        export DEPLOY_UI_PLUGIN=false
+    fi
+fi
+
+ask_yes_no 'Deploy the searchable merged-logging-test log generator?'
+deploy_test_logs=$answer
+
+if [[ "$install_operators" == y ]]; then
+    ./install-logging-operators.sh
+fi
+./deploy.sh "$data_model"
+
+if [[ "$deploy_test_logs" == y ]]; then
+    oc apply -f random-logs-generator-deployment.yaml
+    oc rollout status deployment/log-generator -n merged-logging-test --timeout=5m
+fi
